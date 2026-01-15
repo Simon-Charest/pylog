@@ -1,9 +1,8 @@
 from argparse import Namespace
-from json import dumps
-from typing import Any
-from pandas import DataFrame, concat, json_normalize, option_context, read_csv, read_sql
+from pandas import DataFrame, concat, json_normalize, read_csv, read_sql
 from pathlib import Path
 from sqlite3 import Connection, connect
+from typing import Any
 
 
 def main() -> None:
@@ -11,6 +10,7 @@ def main() -> None:
     configuration: dict[str, Any] = load_configuration(arguments.verbose)
     connection: Connection = get_connection(configuration.get("database"), arguments.verbose)
     data_frame: DataFrame
+    sql: str
 
     if arguments.read is not None:
         if len(arguments.read):
@@ -22,14 +22,14 @@ def main() -> None:
         write(data_frame, connection, configuration.get("table"), verbose=arguments.verbose)
 
     if arguments.query:
-        data_frame = query(connection, configuration.get("table"), arguments.verbose)
-
-        with option_context("display.max_columns", None, "display.max_colwidth", None):
-            print(data_frame.iloc[0])
+        sql = f"SELECT * FROM {configuration.get("table")} ORDER BY CreationDate ASC LIMIT 10;"
+        data_frame = query(sql, connection, arguments.verbose)
+        print(data_frame)
 
     if arguments.ip:
-        data_frame = get_ips(connection, configuration.get("table"), arguments.verbose)
-        print(data_frame.head(1))
+        sql = f"SELECT DISTINCT ClientIPAddress FROM {configuration.get("table")};"
+        data_frame = query(sql, connection, arguments.verbose)
+        print(data_frame)
 
     disconnect(connection, verbose=arguments.verbose)
 
@@ -67,11 +67,27 @@ def get_connection(database: Path, verbose: bool = False) -> Connection:
     return connection
 
 
-def read(path: str, verbose: bool = False) -> DataFrame:
+def get_paths(path: str | list[str]) -> list[str]:
+    from collections.abc import Iterable
     from glob import glob
+    
+    if isinstance(path, str):
+        return glob(path)
+
+    if isinstance(path, Iterable):
+        paths: list[str] = []
+        p: str
+
+        for p in path:
+            paths.extend(glob(p))
+
+        return paths
+
+
+def read(path: str, verbose: bool = False) -> DataFrame:
     from json import loads
     
-    paths: list[str] = glob(path)
+    paths: list[str] = get_paths(path)
 
     if verbose:
         print(f"Reading CSV {len(paths)} file(s)...")
@@ -90,29 +106,18 @@ def read(path: str, verbose: bool = False) -> DataFrame:
 
 
 def write(data_frame: DataFrame, connection: Connection, name: str, if_exists: str = "replace", index: bool = False, verbose: bool = False) -> None:
-    for column in data_frame.columns:
-        if data_frame[column].map(lambda obj: isinstance(obj, (list, dict))).any():
-            data_frame[column] = data_frame[column].map(dumps)
-
-    if verbose:
-        print(f"Convert unhashable object(s) to JSON string(s).")
-
-    data_frame = data_frame.drop_duplicates()
-
-    if verbose:
-        print(f"Removed duplicate(s).")
-    
+    data_frame = unhash_objects(data_frame, verbose)
+    data_frame = drop_duplicates(data_frame, verbose)
     data_frame.to_sql(name, connection, if_exists=if_exists, index=index)
 
     if verbose:
         print(f"Wrote {len(data_frame)} row(s) to database.")
 
 
-def query(connection: Connection, table: str,verbose: bool = False) -> DataFrame:
+def query(sql: str, connection: Connection, verbose: bool = False) -> DataFrame:
     if verbose:
         print(f"Querying database...")
 
-    sql: str = f"SELECT * FROM {table} LIMIT 10;"
     data_frame: DataFrame = read_sql(sql, connection)
     
     if verbose:
@@ -121,15 +126,24 @@ def query(connection: Connection, table: str,verbose: bool = False) -> DataFrame
     return data_frame
 
 
-def get_ips(connection: Connection, table: str, verbose: bool = False) -> DataFrame:
+def unhash_objects(data_frame: DataFrame, verbose: bool = False) -> DataFrame:
+    from json import dumps
+
+    for column in data_frame.columns:
+        if data_frame[column].map(lambda obj: isinstance(obj, (list, dict))).any():
+            data_frame[column] = data_frame[column].map(dumps)
+
     if verbose:
-        print(f"Getting IP addresses from database...")
-        
-    sql: str = f"SELECT DISTINCT ClientIPAddress FROM {table};"
-    data_frame: DataFrame = read_sql(sql, connection)
-    
+        print(f"Convert unhashable object(s) to JSON string(s).")
+
+    return data_frame
+
+
+def drop_duplicates(data_frame: DataFrame, verbose: bool = False) -> DataFrame:
+    data_frame = data_frame.drop_duplicates()
+
     if verbose:
-        print(f"Fetched {len(data_frame)} row(s).")
+        print(f"Removed duplicate(s).")
 
     return data_frame
 
