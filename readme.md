@@ -1,5 +1,8 @@
 # Python Microsoft Log Analyzer
 
+## Prerequisites
+Search then download audit files manually from [Microsoft Purview](https://purview.microsoft.com/audit/auditsearch).
+
 ## Setup
 ```powershell
 cd C:\source
@@ -14,5 +17,4 @@ pip install -r requirements.txt
 ## Run
 ```powershell
 python . -h
-python . -r data/*.csv
 ```
