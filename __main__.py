@@ -27,9 +27,44 @@ def main() -> None:
         print(data_frame)
 
     if arguments.ip:
-        sql = f"SELECT DISTINCT ClientIPAddress FROM {configuration.get("table")};"
+        sql = f"""SELECT DISTINCT ClientIPAddress
+FROM {configuration.get("table")}
+WHERE ClientIPAddress IS NOT NULL
+AND ClientIPAddress != '0.0.0.0' -- Unspecified
+
+/* IPv4 private / special */
+AND ClientIPAddress NOT LIKE '10.%'
+AND ClientIPAddress NOT LIKE '127.%' -- Loopback
+AND ClientIPAddress NOT LIKE '169.254.%' -- Link-local
+
+-- RFC1918
+AND ClientIPAddress NOT LIKE '172.16.%'
+AND ClientIPAddress NOT LIKE '172.17.%'
+AND ClientIPAddress NOT LIKE '172.18.%'
+AND ClientIPAddress NOT LIKE '172.19.%'
+AND ClientIPAddress NOT LIKE '172.2?.%'
+AND ClientIPAddress NOT LIKE '172.30.%'
+AND ClientIPAddress NOT LIKE '172.31.%'
+
+AND ClientIPAddress NOT LIKE '192.168.%'
+
+/* IPv6 private / special */
+AND ClientIPAddress != '::1' -- Loopback
+AND ClientIPAddress NOT LIKE 'fc00:%' -- ULA
+AND ClientIPAddress NOT LIKE 'fd00:%' -- ULA
+AND ClientIPAddress NOT LIKE 'fe80:%' -- Link-local
+
+/* Microsoft-owned */
+AND ClientIPAddress NOT LIKE '20.%'
+AND ClientIPAddress NOT LIKE '40.%'
+AND ClientIPAddress NOT LIKE '52.%'
+AND ClientIPAddress NOT LIKE '2603:%' -- Azure / M365 IPv6
+;
+"""
         data_frame = query(sql, connection, arguments.verbose)
-        print(data_frame)
+        print(data_frame["ClientIPAddress"].to_list())
+
+        # TODO: Develop an IP geolocation module using ip-api.com
 
     disconnect(connection, verbose=arguments.verbose)
 
