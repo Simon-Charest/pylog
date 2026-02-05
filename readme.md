@@ -18,3 +18,6 @@ pip install -r requirements.txt
 ```powershell
 python . -h
 ```
+
+## TODO
+Develop an IP geolocation module using ip-api.com
