@@ -1,4 +1,4 @@
-# PyLog: Python Microsoft Log Analyzer
+# PyLog: Python Log Analyzer
 
 ## Prerequisites
 Search then download audit files manually from [Microsoft Purview](https://purview.microsoft.com/audit/auditsearch).

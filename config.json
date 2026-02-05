@@ -1,5 +1,0 @@
-{
-    "data": "data/**/*.csv",
-    "database": "data/logs.db",
-    "table": "audit_logs"
-}
