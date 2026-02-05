@@ -1,5 +1,5 @@
 from json import dumps, loads
-from pandas import DataFrame, concat, read_csv
+from pandas import DataFrame, concat, json_normalize, read_csv
 
 from src.get_paths import get_paths
 
@@ -19,6 +19,7 @@ def read(paths: list[str], verbose: bool = False) -> DataFrame:
         print(f"Reading CSV {len(paths)} file(s)...")
 
     data_frame: DataFrame = concat((read_csv(path, converters={"AuditData": loads}) for path in paths), ignore_index=True)
+    data_frame = data_frame.drop(columns=["AuditData"]).join(json_normalize(data_frame["AuditData"]).add_prefix("AuditData_"))
 
     if verbose:
         print(f"{len(data_frame)} row(s) read.")
@@ -27,11 +28,12 @@ def read(paths: list[str], verbose: bool = False) -> DataFrame:
 
 
 def deduplicate_columns(data_frame: DataFrame, verbose: bool = False) -> DataFrame:
-    data_frame = data_frame.loc[:, ~data_frame.columns.duplicated()]
+    columns: list[str] = [column for column in data_frame.columns if column.endswith("CorrelationID")]
+    data_frame["AuditData_CorrelationID"] = data_frame[columns].bfill(axis=1).iloc[:, 0]
+    data_frame = data_frame.drop(columns=columns)
 
     if verbose:
         print(f"Columns deduplicated: {len(data_frame.columns)} column(s) remaining.")
-
 
     return data_frame
 

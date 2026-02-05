@@ -17,6 +17,11 @@ def main() -> None:
     connection: Connection = get_connection(configuration["database"], arguments.verbose)
 
     if arguments.get_audit_log_data is not None:
+        connection.execute(f"DROP TABLE {configuration["table"]};")
+
+        if arguments.verbose:
+            print(f'"{configuration["table"]}" table dropped.')
+
         path: str
 
         if len(arguments.get_audit_log_data):
@@ -32,7 +37,7 @@ def main() -> None:
         paths: list[str] = glob("sql/**/*.sql", recursive=True)
        
         for path in paths:  
-                print(Path(path).as_posix())
+            print(Path(path).as_posix())
 
     if arguments.query:
         stream: TextIOWrapper = open(Path(__file__).parent.joinpath(arguments.query))

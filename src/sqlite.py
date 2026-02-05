@@ -14,7 +14,7 @@ def get_connection(database: Path, verbose: bool = False) -> Connection:
     return connection
 
 
-def write(data_frame: DataFrame, connection: Connection, name: str, if_exists: Literal["fail", "replace", "append", "delete_rows"] = "replace", index: bool = False, verbose: bool = False) -> None:
+def write(data_frame: DataFrame, connection: Connection, name: str, if_exists: Literal["fail", "replace", "append", "delete_rows"] = "append", index: bool = False, verbose: bool = False) -> None:
     data_frame.to_sql(name, connection, if_exists=if_exists, index=index)
 
     if verbose:
