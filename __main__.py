@@ -61,15 +61,18 @@ TrustServerCertificate={configuration["SQLServer"]["trust_server_certificate"]};
         sql: str = stream.read()
         stream.close()
         cursor.execute(sql)
-        rows: list[Row] = cursor.fetchall()
-        cursor.execute(sql)
-        columns: list[str] = [column[0] for column in cursor.description]
-        sqlserver_connection.close()
-        row: Row
-        print(columns)
+    
+        if cursor.description:
+            rows: list[Row] = cursor.fetchall()
+            columns: list[str] = [column[0] for column in cursor.description]
+            print(columns)    
+            row: Row
 
-        for row in rows:
-            print(row)
+            for row in rows:
+                print(row)
+
+        sqlserver_connection.close()
+        
 
     disconnect(sqlite_connection, verbose=arguments.verbose)
 

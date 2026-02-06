@@ -1,3 +1,3 @@
-SELECT TOP 5 o.*
-FROM oeaudd AS o
+SELECT TOP 5 *
+FROM OEAudD
 ;
