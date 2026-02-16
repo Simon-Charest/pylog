@@ -1,7 +1,12 @@
 # PyLog: Python Log Analyzer
 
 ## Prerequisites
-Search then download audit files manually from [Microsoft Purview](https://purview.microsoft.com/audit/auditsearch).
+
+### Audit Log (SQLite)
+- Search then download audit files manually from [Microsoft Purview](https://purview.microsoft.com/audit/auditsearch);
+
+### Sage 300 (SQL Server)
+- Install [ODBC Driver for SQL Server](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server).
 
 ## Setup
 ```powershell

@@ -2,4 +2,6 @@ __pycache__/
 .git/
 .venv/
 data/
+*.html
 config.json
+

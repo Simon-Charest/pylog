@@ -1,6 +1,6 @@
 from argparse import ArgumentParser, Namespace
 from glob import glob
-from pandas import DataFrame
+from pandas import DataFrame, set_option
 from pathlib import Path
 from sqlalchemy import Connection as Connection_SQLServer
 from sqlite3 import Connection as Connection_SQLite
@@ -17,6 +17,10 @@ def main() -> None:
     arguments: Namespace = parse_arguments()
     configuration: dict[str, Any] = load_configuration(Path(__file__).parent.joinpath("config.json"), arguments.verbose)
     connection_sqlite: Connection_SQLite = get_connection_sqlite(configuration["SQLite"]["database"], arguments.verbose)
+
+    set_option("display.max_rows", None)
+    set_option("display.max_columns", None)
+    set_option("display.width", None)
 
     if arguments.get_audit_log_data is not None:
         connection_sqlite.execute(f"DROP TABLE {configuration["SQLite"]["table"]};")
