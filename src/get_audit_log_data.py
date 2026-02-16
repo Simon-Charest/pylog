@@ -6,7 +6,7 @@ from src.get_paths import get_paths
 
 def get_audit_log_data(path: str, verbose: bool = False) -> DataFrame:
     paths: list[str] = get_paths(path)
-    data_frame = read(paths, verbose)
+    data_frame: DataFrame = read(paths, verbose)
     data_frame = deduplicate_columns(data_frame, verbose)
     data_frame = make_hashable(data_frame, verbose)
     data_frame = deduplicate_rows(data_frame, verbose)
