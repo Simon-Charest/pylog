@@ -16,6 +16,14 @@ SELECT a.AudtOrg
     , ROUND(a.QtyShipped * (a.UnitPrice - a.UnitCost), 2) AS TotalProfit
     , CASE WHEN a.UnitCost > 0.0 THEN ROUND((a.UnitPrice / a.UnitCost - 1) * 100, 1) END AS ProfitRatio
     , a.FromDoc
+    , (
+        SELECT TOP 1 b.FromDoc
+        FROM OEAudD AS b
+        WHERE CONVERT(DATE, CAST(b.AudtDate AS VARCHAR(8)), 112) = CONVERT(DATE, CAST(a.AudtDate AS VARCHAR(8)), 112)
+            AND b.Item = a.Item
+            AND b.QtyShipped = a.QtyShipped
+            AND b.FromDoc LIKE 'ORD______'
+    ) AS OrderNumber -- Show corresponding order number
     , CASE WHEN a.RtgDateDue != 0.0 THEN CONVERT(DATE, CAST(a.RtgDateDue AS VARCHAR(8)), 112) END AS RetainageDateDue
 FROM OEAudD AS a -- Order Entry - Audit Details
 WHERE 0 = 0
@@ -29,7 +37,8 @@ WHERE 0 = 0
     AND a.AudtUser NOT LIKE 'LO%'
     AND a.AudtUser NOT LIKE 'MI%'
     AND a.AudtUser NOT LIKE 'Q%'
-    --AND a.AudtUser LIKE 'MA%'
+    AND a.AudtUser LIKE 'MA%'
+    AND a.FromDoc NOT LIKE 'ORD______' -- Hide order rows
 ORDER BY TotalProfit DESC
     , a.AudtDate ASC
     , a.Category ASC

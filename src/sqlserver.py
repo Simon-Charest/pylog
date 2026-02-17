@@ -1,4 +1,4 @@
-from pandas import DataFrame, read_sql
+from pandas import NA, DataFrame, read_sql
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from urllib.parse import quote_plus
@@ -50,7 +50,8 @@ def query(sql: str, connection: Engine, verbose: bool = False) -> DataFrame:
     if verbose:
         print("Querying database...")
 
-    data_frame: DataFrame = read_sql(sql, connection)
+    data_frame: DataFrame = read_sql(sql, connection).fillna("")
+
 
     if verbose:
         print(f"Fetched {len(data_frame)} row(s).")

@@ -1,5 +1,5 @@
 
-from pandas import DataFrame, read_sql
+from pandas import NA, DataFrame, read_sql
 from pathlib import Path
 from sqlite3 import Connection, connect
 from typing import Literal
@@ -25,7 +25,7 @@ def query(sql: str, connection: Connection, verbose: bool = False) -> DataFrame:
     if verbose:
         print(f"Querying database...")
 
-    data_frame: DataFrame = read_sql(sql, connection)
+    data_frame: DataFrame = read_sql(sql, connection).fillna("")
     
     if verbose:
         print(f"Fetched {len(data_frame)} row(s).")
