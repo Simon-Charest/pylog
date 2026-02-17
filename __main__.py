@@ -48,8 +48,9 @@ def main() -> None:
         sql: str = read(Path(__file__).parent.joinpath(arguments.query))
         data: DataFrame = query_sqlite(sql, connection_sqlite, arguments.verbose)
         print(data)
-        Path.mkdir(Path(str(arguments.sage).replace("sql\\", "data\\")).parent, exist_ok=True)
-        data.to_html(str(arguments.sage).replace("sql\\", "data\\").replace(".sql", ".html"), index=False)
+        file_path: Path = Path(str(arguments.query).replace("\\", "/").replace("sql/", "data/"))
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        data.to_html(file_path.with_suffix(".html"), index=False)
 
     if arguments.sage:
         connection_sqlserver: Engine = get_connection_sqlserver(
@@ -68,8 +69,9 @@ def main() -> None:
         data: DataFrame = query_sqlserver(sql, connection_sqlserver, arguments.verbose)
         disconnect_sqlserver(connection_sqlserver, verbose=arguments.verbose)
         print(data)
-        Path.mkdir(Path(str(arguments.sage).replace("sql\\", "data\\")).parent, exist_ok=True)
-        data.to_html(str(arguments.sage).replace("sql\\", "data\\").replace(".sql", ".html"), index=False)
+        file_path: Path = Path(str(arguments.sage).replace("\\", "/").replace("sql/", "data/"))
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        data.to_html(file_path.with_suffix(".html"), index=False)
 
     disconnect_sqlite(connection_sqlite, verbose=arguments.verbose)
 
