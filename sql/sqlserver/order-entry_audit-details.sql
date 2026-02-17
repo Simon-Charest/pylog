@@ -7,9 +7,14 @@ SELECT a.AudtOrg
     , a.[Desc]
     , a.PriceList
     , a.Location
-    , a.UnitPrice
-    , a.UnitCost
-    , a.QtyShipped
+    , CONVERT(INT, a.QtyShipped) AS QtyShipped
+    , ROUND(a.UnitCost, 2) AS UnitCost
+    , ROUND(a.UnitPrice, 2) AS UnitPrice
+    , ROUND(a.UnitPrice - a.UnitCost, 2) AS Profit
+    , ROUND(a.QtyShipped * a.UnitCost, 2) AS TotalCost
+    , ROUND(a.QtyShipped * a.UnitPrice, 2) AS TotalPrice
+    , ROUND(a.QtyShipped * (a.UnitPrice - a.UnitCost), 2) AS TotalProfit
+    , CASE WHEN a.UnitCost > 0.0 THEN ROUND((a.UnitPrice / a.UnitCost - 1) * 100, 1) END AS ProfitRatio
     , a.FromDoc
     , CASE WHEN a.RtgDateDue != 0.0 THEN CONVERT(DATE, CAST(a.RtgDateDue AS VARCHAR(8)), 112) END AS RetainageDateDue
 FROM OEAudD AS a -- Order Entry - Audit Details
@@ -25,7 +30,8 @@ WHERE 0 = 0
     AND a.AudtUser NOT LIKE 'MI%'
     AND a.AudtUser NOT LIKE 'Q%'
     --AND a.AudtUser LIKE 'MA%'
-ORDER BY a.AudtDate ASC
+ORDER BY TotalProfit DESC
+    , a.AudtDate ASC
     , a.Category ASC
     , a.Item ASC
 ;
