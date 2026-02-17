@@ -48,6 +48,7 @@ def main() -> None:
         sql: str = read(Path(__file__).parent.joinpath(arguments.query))
         data: DataFrame = query_sqlite(sql, connection_sqlite, arguments.verbose)
         print(data)
+        print(f"\n{len(data)} record(s)")
         file_path: Path = Path(str(arguments.query).replace("\\", "/").replace("sql/", "data/"))
         file_path.parent.mkdir(parents=True, exist_ok=True)
         data.to_html(file_path.with_suffix(".html"), index=False)
