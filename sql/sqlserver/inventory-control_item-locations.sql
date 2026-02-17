@@ -5,7 +5,7 @@ SELECT CONVERT(DATE, CAST(l.AudtDate AS VARCHAR(8)), 112) AS AuditDate
     , l.ItemNo
     , i.[Desc]
     , l.Location
-    , CONVERT(DATE, CAST(l.LastRcptDt AS VARCHAR(8)), 112) AS LastReceiptDate
+    , CASE WHEN l.LastRcptDt != 0.0 THEN CONVERT(DATE, CAST(l.LastRcptDt AS VARCHAR(8)), 112) END AS LastReceiptDate
     , l.QtyOnHand
     , l.Cost1
     , l.RecentCost
@@ -25,8 +25,15 @@ WHERE 0 = 0
     AND l.AudtUser NOT LIKE 'MI%'
     AND l.AudtUser NOT LIKE 'Q%'
     */
-    AND l.ItemNo = '3153'
-    AND l.Location = 3
+    AND l.ItemNo IN (
+        '3137'
+        , '3138'
+        , '3145'
+        , '3153'
+        , '3156'
+        , '3165'
+    )
+    --AND l.Location = 3
 ORDER BY l.AudtDate ASC
     , l.ItemNo ASC
 ;
