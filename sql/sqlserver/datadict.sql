@@ -31,7 +31,7 @@ SELECT
     g.TableName
     , STRING_AGG(CHAR(g.c), '') AS DecodedString
 FROM Groups AS g
-WHERE g.TableName = 'VIWLOG'
+WHERE g.TableName = 'VIWLOG' -- View Log
 GROUP BY g.TableName
     , g.[Group]
 HAVING LEN(STRING_AGG(CHAR(g.c), '')) >= 3

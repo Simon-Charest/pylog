@@ -12,9 +12,12 @@ FROM sys.tables AS t
 WHERE 0 = 0
     AND
     (
-        t.name LIKE '%AUD%'
-        OR t.name LIKE '%LOG%'
-        OR t.name LIKE '%ACT%'
+        0 = 1
+        --OR t.name LIKE '%ACT%' -- Activity
+        --OR t.name LIKE '%AUD%' -- Audit
+        --OR t.name LIKE '%HIS%' -- History
+        OR t.name LIKE 'IC%' -- Inventory Control
+        --OR t.name LIKE '%LOG%' -- Log
     )
     AND p.index_id IN (0, 1)  -- Heap or clustered index
 GROUP BY s.name
@@ -22,8 +25,8 @@ GROUP BY s.name
     --, c.max_length
     --, y.name
 HAVING SUM(p.rows) > 50
-ORDER BY row_count DESC
-    , s.name ASC
+ORDER BY s.name ASC
     , t.name ASC
     --, y.name ASC
+    , row_count DESC
 ;

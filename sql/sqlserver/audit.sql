@@ -4,7 +4,7 @@ WITH AuditData AS (
         , a.TableName
         , a.TableDescription
         , a.AudtUser AS AuditUser
-        , CONVERT(DATE, CAST(a.AudtDate AS varchar(8)), 112) AS AuditDate
+        , CONVERT(DATE, CAST(a.AudtDate AS VARCHAR(8)), 112) AS AuditDate
     FROM (
         SELECT AudtUser, AudtDate, 'NFDDAT' AS DatabaseName, 'APOBL' AS TableName, 'Documents' AS TableDescription FROM NFDDAT.dbo.APOBL
         UNION ALL SELECT AudtUser, AudtDate, 'NFDDAT', 'APOBP', 'Document Payments' FROM NFDDAT.dbo.APOBP
@@ -170,8 +170,9 @@ WHERE 0 = 0
     AND b.AuditUser NOT LIKE 'LO%'
     AND b.AuditUser NOT LIKE 'MI%'
     AND b.AuditUser NOT LIKE 'Q%'
-    --AND b.AuditUser LIKE 'P%'
-    --AND b.AuditDate >= '2026-02-01'
+    AND b.AuditUser LIKE 'P%'
+    AND b.AuditDate >= '2026-02-01'
+    AND 
 GROUP BY b.DatabaseName
     , b.ModuleName
     , b.TableName

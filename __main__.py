@@ -2,8 +2,8 @@ from argparse import ArgumentParser, Namespace
 from glob import glob
 from pandas import DataFrame, set_option
 from pathlib import Path
-from sqlalchemy import Connection as Connection_SQLServer
-from sqlite3 import Connection as Connection_SQLite
+from sqlalchemy import Engine
+from sqlite3 import Connection as Connection
 from typing import Any
 
 from src.get_audit_log_data import get_audit_log_data
@@ -16,7 +16,7 @@ from src.sqlserver import get_connection as get_connection_sqlserver, query as q
 def main() -> None:
     arguments: Namespace = parse_arguments()
     configuration: dict[str, Any] = load_configuration(Path(__file__).parent.joinpath("config.json"), arguments.verbose)
-    connection_sqlite: Connection_SQLite = get_connection_sqlite(configuration["SQLite"]["database"], arguments.verbose)
+    connection_sqlite: Connection = get_connection_sqlite(configuration["SQLite"]["database"], arguments.verbose)
 
     set_option("display.max_rows", None)
     set_option("display.max_columns", None)
@@ -52,7 +52,7 @@ def main() -> None:
         data.to_html(str(arguments.sage).replace("sql\\", "data\\").replace(".sql", ".html"), index=False)
 
     if arguments.sage:
-        connection_sqlserver: Connection_SQLServer = get_connection_sqlserver(
+        connection_sqlserver: Engine = get_connection_sqlserver(
             configuration["SQLServer"]["driver"],
             configuration["SQLServer"]["server"],
             configuration["SQLServer"]["database"],
