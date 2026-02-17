@@ -29,3 +29,4 @@ WHERE 0 = 0
     AND l.Location = 3
 ORDER BY l.AudtDate ASC
     , l.ItemNo ASC
+;

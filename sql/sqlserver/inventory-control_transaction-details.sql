@@ -15,3 +15,4 @@ WHERE 0 = 0
 ORDER BY t.AudtDate ASC
     , t.Category ASC
     , t.FmtItemNo ASC
+;
