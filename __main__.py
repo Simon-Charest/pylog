@@ -69,6 +69,7 @@ def main() -> None:
         data: DataFrame = query_sqlserver(sql, connection_sqlserver, arguments.verbose)
         disconnect_sqlserver(connection_sqlserver, verbose=arguments.verbose)
         print(data)
+        print(f"\n{len(data)} record(s)")
         file_path: Path = Path(str(arguments.sage).replace("\\", "/").replace("sql/", "data/"))
         file_path.parent.mkdir(parents=True, exist_ok=True)
         data.to_html(file_path.with_suffix(".html"), index=False)
