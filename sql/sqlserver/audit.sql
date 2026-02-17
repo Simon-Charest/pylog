@@ -170,9 +170,8 @@ WHERE 0 = 0
     AND b.AuditUser NOT LIKE 'LO%'
     AND b.AuditUser NOT LIKE 'MI%'
     AND b.AuditUser NOT LIKE 'Q%'
-    AND b.AuditUser LIKE 'P%'
+    --AND b.AuditUser LIKE 'P%'
     AND b.AuditDate >= '2026-02-01'
-    AND 
 GROUP BY b.DatabaseName
     , b.ModuleName
     , b.TableName

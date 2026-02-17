@@ -1,12 +1,31 @@
 
-SELECT TOP 5 a.AudtUser
-    , a.AuditDate
-FROM
-(
-    SELECT *
-        , CONVERT(DATE, CAST(AudtDate AS VARCHAR(8)), 112) AS AuditDate
-    FROM OEAudD -- Order Entry - Audit Details
-) AS a
-WHERE a.AuditDate >= '2026-02-01'
-ORDER BY a.AuditDate DESC
+SELECT a.AudtOrg
+    , CONVERT(DATE, CAST(a.AudtDate AS VARCHAR(8)), 112) AS AuditDate
+    , a.AudtUser
+    , a.Category
+    , a.Item
+    , a.[Desc]
+    , a.PriceList
+    , a.Location
+    , a.UnitPrice
+    , a.UnitCost
+    , a.QtyShipped
+    , a.FromDoc
+    , CASE WHEN a.RtgDateDue != 0.0 THEN CONVERT(DATE, CAST(a.RtgDateDue AS VARCHAR(8)), 112) END AS RetainageDateDue
+FROM OEAudD AS a -- Order Entry - Audit Details
+WHERE 0 = 0
+    AND CONVERT(DATE, CAST(a.AudtDate AS VARCHAR(8)), 112) >= '2025-12-21'
+    AND a.AudtUser NOT LIKE 'AD%'
+    AND a.AudtUser NOT LIKE 'B%'
+    AND a.AudtUser NOT LIKE 'D%'
+    AND a.AudtUser NOT LIKE 'I%'
+    AND a.AudtUser NOT LIKE 'J%'
+    AND a.AudtUser NOT LIKE 'K%'
+    AND a.AudtUser NOT LIKE 'LO%'
+    AND a.AudtUser NOT LIKE 'MI%'
+    AND a.AudtUser NOT LIKE 'Q%'
+    --AND a.AudtUser LIKE 'MA%'
+ORDER BY a.AudtDate ASC
+    , a.Category ASC
+    , a.Item ASC
 ;
