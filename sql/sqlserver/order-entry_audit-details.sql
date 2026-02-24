@@ -27,7 +27,7 @@ SELECT a.AudtOrg
     , CASE WHEN a.RtgDateDue != 0.0 THEN CONVERT(DATE, CAST(a.RtgDateDue AS VARCHAR(8)), 112) END AS RetainageDateDue
 FROM OEAudD AS a -- Order Entry - Audit Details
 WHERE 0 = 0
-    AND CONVERT(DATE, CAST(a.AudtDate AS VARCHAR(8)), 112) >= '2025-12-21'
+    AND CONVERT(DATE, CAST(a.AudtDate AS VARCHAR(8)), 112) >= '2025-12-01'
     AND a.AudtUser NOT LIKE 'AD%'
     AND a.AudtUser NOT LIKE 'B%'
     AND a.AudtUser NOT LIKE 'D%'

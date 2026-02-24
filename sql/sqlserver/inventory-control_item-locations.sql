@@ -25,13 +25,14 @@ WHERE 0 = 0
     AND l.AudtUser NOT LIKE 'MI%'
     AND l.AudtUser NOT LIKE 'Q%'
     */
-    AND l.ItemNo IN (
-        '3137'
-        , '3138'
-        , '3145'
-        , '3153'
-        , '3156'
-        , '3165'
+    AND i.ItemNo IN (
+        '1369'
+        , '3137'
+        --, '3138'
+        --, '3145'
+        --, '3153'
+        --, '3156'
+        --, '3165'
     )
     --AND l.Location = 3
 ORDER BY l.AudtDate ASC
