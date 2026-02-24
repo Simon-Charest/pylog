@@ -2,7 +2,7 @@
     "SQLite":
     {
         "data": "data/**/*.csv",
-        "database": "data/logs.db",
+        "database": "data/database.db",
         "table": "audit_logs"
     },
     "SQLServer":

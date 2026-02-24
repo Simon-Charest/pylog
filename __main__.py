@@ -45,13 +45,25 @@ def main() -> None:
             print(Path(path).as_posix())
 
     if arguments.query_sqlite:
-        sql: str = read(Path(__file__).parent.joinpath(arguments.query))
+        sql: str = read(Path(__file__).parent.joinpath(arguments.query_sqlite))
         data: DataFrame = query_sqlite(sql, connection_sqlite, arguments.verbose)
-        print(data)
-        print(f"\n{len(data)} record(s)")
-        file_path: Path = Path(str(arguments.query).replace("\\", "/").replace("sql/", "data/"))
+
+        # Prepare export path
+        file_path: Path = Path(str(arguments.query_sqlite).replace("\\", "/").replace("sql/", "data/"))
         file_path.parent.mkdir(parents=True, exist_ok=True)
-        data.to_html(file_path.with_suffix(".html"), index=False)
+
+        # Export to CSV
+        if arguments.export_csv:
+            data.to_csv(file_path.with_suffix(".csv"), index=False)
+
+        # Export to HTML
+        if arguments.export_html:
+            data.to_html(file_path.with_suffix(".html"), index=False)
+
+        # Print to console
+        if arguments.verbose:
+            print(data)
+            print(f"\n{len(data)} record(s)")
 
     if arguments.query_sqlserver:
         connection_sqlserver: Engine = get_connection_sqlserver(
@@ -74,6 +86,12 @@ def main() -> None:
         file_path: Path = Path(str(arguments.query_sqlserver).replace("\\", "/").replace("sql/", "data/"))
         file_path.parent.mkdir(parents=True, exist_ok=True)
 
+        # Export to SQLite
+        if arguments.export_sqlite:
+            connection: Connection = connect(configuration["SQLite"]["database"])
+            data.to_sql(file_path.stem, connection, if_exists="replace", index=False)
+            connection.close()
+
         # Export to CSV
         if arguments.export_csv:
             data.to_csv(file_path.with_suffix(".csv"), index=False)
@@ -82,12 +100,7 @@ def main() -> None:
         if arguments.export_html:
             data.to_html(file_path.with_suffix(".html"), index=False)
 
-        # Export to SQLite
-        if arguments.export_sqlite:
-            connection: Connection = connect(file_path.with_suffix(".db"))
-            data.to_sql(file_path.name, connection, if_exists="replace", index=False)
-            connection.close()
-
+        # Print to console
         if arguments.verbose:
             print(data)
             print(f"\n{len(data)} record(s)")
