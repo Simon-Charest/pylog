@@ -6,5 +6,6 @@ SELECT c.table_name
     , c.is_nullable
 FROM information_schema.columns AS c
 WHERE c.table_name = 'OEAudD' -- Order Entry – Audit Detail
-ORDER BY c.ordinal_position ASC
+ORDER BY c.table_name ASC
+    , c.ordinal_position ASC
 ;
