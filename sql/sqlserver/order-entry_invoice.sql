@@ -19,9 +19,9 @@ SELECT
     , d.LineNum     -- Line Number
     , d.Category    -- Item Category
     , d.Item        -- Item Number
-    , d.[Desc]      -- Description
-    , d.Location    -- Location/Warehouse Id
-    , l.[Desc]      -- Location/Warehouse Name
+    , d.[Desc]      -- Item Description
+    , d.Location    -- Location/Warehouse Number
+    , l.[Desc]      -- Location/Warehouse Description
     , t.QtyOnHand   -- Quantity on Hand
     , t.QtyOnHand - t.QtyCommit AS QuantityAvailable -- Quantity Available
     , d.QtyShipped  -- Quantity Shipped
